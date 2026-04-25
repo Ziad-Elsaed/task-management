@@ -14,7 +14,9 @@ const validate = require('./middleware/validate');
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+    origin: '*'
+}));
 app.use(express.json());
 
 // set dns manually to google 8.8.8.8
@@ -54,8 +56,8 @@ app.post(
 
             res.json({ message: "User created successfully" });
 
-        } catch {
-            res.status(500).json({ message: "Server error" });
+        } catch (err) {
+            next(err);
         }
     }
 );
@@ -86,8 +88,8 @@ app.post(
 
             res.json({ token });
 
-        } catch {
-            res.status(500).json({ message: "Server error" });
+        } catch (err) {
+            next(err);
         }
     }
 );
@@ -143,7 +145,18 @@ app.delete('/tasks/:id', authMiddleware,
 
 /* ========================= */
 
-const PORT = 3000;
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+// const PORT = 3000;
+// app.listen(PORT, () => {
+//     console.log(`Server running on http://localhost:${PORT}`);
+// });
+
+app.use((err, req, res, next) => {
+    console.error("GLOBAL ERROR:", err);
+    console.error(err.stack);
+
+    res.status(500).json({
+        message: err.message || "Something went wrong"
+    });
 });
+
+module.exports = app;
