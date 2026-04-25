@@ -46,7 +46,7 @@ app.post(
             .withMessage('Password must be at least 6 characters')
     ],
     validate,
-    async (req, res) => {
+    async (req, res, next) => {
         const { name, email, password } = req.body;
 
         try {
@@ -74,7 +74,7 @@ app.post(
         body('password').notEmpty().withMessage('Password is required')
     ],
     validate,
-    async (req, res) => {
+    async (req, res, next) => {
         const { email, password } = req.body;
 
         try {
