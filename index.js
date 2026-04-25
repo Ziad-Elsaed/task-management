@@ -22,17 +22,32 @@ app.use(express.json());
 // set dns manually to google 8.8.8.8
 require('dns').setServers(['8.8.8.8']);
 
-// 🔹 DB
-mongoose.connect(process.env.MONGO_URI)
-    .then(() => console.log("MongoDB Connected"))
-    .catch(err => console.log(err));
+// // 🔹 DB
+// mongoose.connect(process.env.MONGO_URI)
+//     .then(() => console.log("MongoDB Connected"))
+//     .catch(err => console.log(err));
 
 /* =========================
    🔹 AUTH ROUTES
 ========================= */
 
-app.get('/', (req, res) => {
-    res.send("API is working ✅");
+let isConnected = false;
+
+const connectDB = async () => {
+  if (isConnected) return;
+
+  try {
+    const db = await mongoose.connect(process.env.MONGO_URI);
+    isConnected = db.connections[0].readyState;
+    console.log("MongoDB connected");
+  } catch (err) {
+    console.error("MongoDB connection error:", err);
+  }
+};
+
+app.use(async (req, res, next) => {
+  await connectDB();
+  next();
 });
 
 // ✅ Register
