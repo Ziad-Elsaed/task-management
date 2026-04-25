@@ -31,6 +31,10 @@ mongoose.connect(process.env.MONGO_URI)
    🔹 AUTH ROUTES
 ========================= */
 
+app.get('/', (req, res) => {
+    res.send("API is working ✅");
+});
+
 // ✅ Register
 app.post(
     '/auth/register',
